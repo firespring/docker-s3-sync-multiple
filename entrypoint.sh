@@ -1,7 +1,5 @@
 #!/bin/sh
 
-echo "Running sync command [ $(echo "$*" | envsubst) ]"
-
 if ! $(docker info >/dev/null 2>&1)
 then
   echo "Unable to connect to docker. You may have forgot to link in the docker socket as a volume (-v /var/run/docker.sock:/var/run/docker.sock)"
@@ -10,7 +8,7 @@ fi
 
 generate()
 {
-  local sync_vars="AWS_DEFAULT_REGION AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_OPTIONS AWS_SYNC_OPTIONS SYNC_PERIOD"
+  local sync_vars="AWS_DEFAULT_REGION AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_OPTIONS AWS_SYNC_OPTIONS SYNC_PERIOD"
 
   if [ -z "${SYNC_BUCKET_LIST}" ]
   then
@@ -34,8 +32,8 @@ generate()
       exit 1
     fi
 
-    service_name=$(echo ${src_bucket} | sed -re 's/[^a-zA-Z0-9_.-]//g')
-    write "  ${service_name}"
+    service_name=$(echo ${src_location} | sed -re 's/[^a-zA-Z0-9_.-]//g')
+    write "  ${service_name}:"
     write "    image: firespring/s3-sync"
     write "    environment:"
     write "      SOURCE_LOCATION: ${src_location}"
@@ -43,10 +41,6 @@ generate()
 
     for sync_var in ${sync_vars}
     do
-      #echo "SYNC VAR IS ${sync_var}"
-      #echo "SYNC VAR VALUE IS sync_var=$sync_var eval echo \\\$sync_var"
-      #value=$(sync_var=$sync_var /bin/sh -c "eval echo \$$sync_var")
-      #value=$(sync_var=$sync_var eval echo \$$sync_var)
       sync_value=$(eval echo \$$sync_var)
       if [ ! -z "$sync_value" ]
       then
@@ -70,9 +64,11 @@ write()
 
 if [ ! -f docker-compose.yml ]
 then
+  echo "Dynamically generating a docker-compose.yml file"
+  env | sort
   generate
+  cat docker-compose.yml
 fi
 
-exit
-
-sh -c "$*"
+echo "Running command [ $* ]"
+$*

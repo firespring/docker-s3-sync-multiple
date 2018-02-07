@@ -23,13 +23,14 @@ RUN curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.
 ENV AWS_DEFAULT_REGION us-west-2
 ENV AWS_ACCESS_KEY_ID ''
 ENV AWS_SECRET_ACCESS_KEY ''
+ENV AWS_SESSION_TOKEN ''
 ENV AWS_OPTIONS ''
 ENV AWS_SYNC_OPTIONS ''
 ENV SOURCE_LOCATION '/directory'
 ENV DEST_LOCATION '/bucket'
-ENV SYNC_PERIOD 600
+ENV SYNC_PERIOD 0
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 VOLUME /var/run/docker.sock
-CMD docker-compose up
+CMD ["docker-compose up"]
