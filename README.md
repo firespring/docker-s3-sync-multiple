@@ -1,5 +1,5 @@
-# docker-s3-sync
-A lightweight container which synchronizes a directory with an s3 bucket at a specified interval.
+# docker-s3-sync-multiple
+A lightweight container which synchronizes multiple files/directories using a dynamically generated docker-compose file and the firespring/s3-sync docker image
 
 docker run -ti \
   -v /var/run/docker.sock:/var/run/docker.sock \

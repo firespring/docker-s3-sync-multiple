@@ -65,9 +65,7 @@ write()
 if [ ! -f docker-compose.yml ]
 then
   echo "Dynamically generating a docker-compose.yml file"
-  env | sort
   generate
-  cat docker-compose.yml
 fi
 
 echo "Running command [ $* ]"
