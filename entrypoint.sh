@@ -48,6 +48,21 @@ generate()
       fi
     done
 
+    if ! echo "${src_location}" | grep -qE "^s3://" || ! echo "${dst_location}" | grep -qE "^s3://"
+    then
+      write "    volumes:"
+
+      if ! echo "${src_location}" | grep -qE "^s3://"
+      then
+        write "      - \"${src_location}:${src_location}\""
+
+      elif ! echo "${dst_location}" | grep -qE "^s3://"
+      then
+        write "      - \"${dst_location}:${dst_location}\""
+
+      fi
+    fi
+
     write ""
   done
 }
